@@ -168,6 +168,7 @@ public final class CSVPrinter implements Flushable, Closeable {
     public synchronized void print(final Object value) throws IOException {
         format.print(value, appendable, newRecord);
         newRecord = false;
+        // ToDo: how does new record get true for every new line ?
     }
 
     /**

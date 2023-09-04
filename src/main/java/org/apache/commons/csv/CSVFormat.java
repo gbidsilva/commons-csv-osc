@@ -2248,6 +2248,8 @@ public final class CSVFormat implements Serializable {
                 if (newRecord) {
                     quote = true;
                 }
+                // this looks odd. "",hello4,,test4
+                // ToDo: we could pass total object count from the top and optimize this. However, we cannot gurrentee that remaining tokens are also "" (empty)
             } else {
                 char c = charSeq.charAt(pos);
 
