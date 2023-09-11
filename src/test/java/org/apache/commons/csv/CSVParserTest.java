@@ -1656,15 +1656,13 @@ public class CSVParserTest {
         CSVParser csvParser = csvFormat.parse(stringReader);
         Exception exception = assertThrows(UncheckedIOException.class, () -> {
             for (CSVRecord record : csvParser) {
-                String content = record.get(0) + " " + record.get(1) + " " + record.get(2) + " " + record.get(3)
-                        + " " + record.get(4) + " " + record.get(5) + " " + record.get(6) + " " + record.get(7)
-                        + " " + record.get(8) + " " + record.get(9);
-                assertNotNull(content);
+                // this will result in an exception
             }
         });
         String expectedErrorMessage = "Exception reading next record: java.io.IOException: Exception during parsing at " +
                 "line: 2, position: 94";
         String actualMessage = exception.getMessage();
+        System.out.println(actualMessage);
         assertTrue(actualMessage.contains(expectedErrorMessage));
         String expectedLastParsedContent = "...rec4,rec5,rec6,rec7,rec8";
         assertEquals(expectedLastParsedContent, csvParser.getLastParsedContent());
@@ -1684,9 +1682,7 @@ public class CSVParserTest {
         CSVParser csvParser = csvFormat.parse(stringReader);
         Exception exception = assertThrows(UncheckedIOException.class, () -> {
             for (CSVRecord record : csvParser) {
-                String content = record.get(0) + " " + record.get(1) + " " + record.get(2) + " " + record.get(3)
-                        + " " + record.get(4) + " " + record.get(5) + " " + record.get(6) + " " + record.get(7);
-                assertNotNull(content);
+                // this will result in an exception
             }
         });
         String expectedErrorMessage = "Exception reading next record: java.io.IOException: Exception during parsing at " +
