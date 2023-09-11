@@ -781,6 +781,7 @@ public final class CSVParser implements Iterable<CSVRecord>, Closeable {
                 }
                 break;
             case INVALID:
+                // following can be CSV parse related exception
                 throw new IOException("(line " + this.getCurrentLineNumber() + ") invalid parse sequence");
             case COMMENT: // Ignored currently
                 if (sb == null) { // first comment for this record
@@ -792,6 +793,7 @@ public final class CSVParser implements Iterable<CSVRecord>, Closeable {
                 this.reusableToken.type = TOKEN; // Read another token
                 break;
             default:
+                // following can be a CSV parse related exception
                 throw new IllegalStateException("Unexpected Token type: " + this.reusableToken.type);
             }
         } while (this.reusableToken.type == TOKEN);

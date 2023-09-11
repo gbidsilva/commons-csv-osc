@@ -224,11 +224,13 @@ final class Lexer implements Closeable {
         int lastChar = reader.getLastChar();
 
         // read the next char and set eol
+        // comment - 1: following will throw IOException but this is purely an IOError and cannot be considered as a CSV parsing issue.
         int c = reader.read();
         /*
          * Note: The following call will swallow LF if c == CR. But we don't need to know if the last char was CR or LF
          * - they are equivalent here.
          */
+        // same as above comment - 1
         boolean eol = readEndOfLine(c);
 
         // empty line detection: eol AND (last char was EOL or beginning)
@@ -236,6 +238,7 @@ final class Lexer implements Closeable {
             while (eol && isStartOfLine(lastChar)) {
                 // Go on char ahead ...
                 lastChar = c;
+                // same as above comment - 1
                 c = reader.read();
                 eol = readEndOfLine(c);
                 // reached the end of the file without any content (empty line at the end)
@@ -268,6 +271,7 @@ final class Lexer implements Closeable {
         }
 
         // Important: make sure a new char gets consumed in each iteration
+        // token.type is set to INVALID during the declaration. Therefore, invalid csv characters are processed in this place.
         while (token.type == INVALID) {
             // ignore whitespaces at beginning of a token
             if (ignoreSurroundingSpaces) {
@@ -287,6 +291,7 @@ final class Lexer implements Closeable {
                 token.type = EORECORD;
             } else if (isQuoteChar(c)) {
                 // consume encapsulated token
+                // following throw parsing related IOException. See inside method comments (newly added) for more details
                 parseEncapsulatedToken(token);
             } else if (isEndOfFile(c)) {
                 // end of file return EOF()
@@ -296,6 +301,7 @@ final class Lexer implements Closeable {
             } else {
                 // next token must be a simple token
                 // add removed blanks when not ignoring whitespace chars...
+                // no any CSV parsing related exceptions are thrown in following method
                 parseSimpleToken(token, c);
             }
         }
@@ -367,6 +373,7 @@ final class Lexer implements Closeable {
                         }
                         if (!Character.isWhitespace((char)c)) {
                             // error invalid char between token and next delimiter
+                            // Following can be changed to a different exception type to identify the parsing issues
                             throw new IOException("(line " + getCurrentLineNumber() +
                                     ") invalid char between encapsulated token and delimiter");
                         }
@@ -374,6 +381,7 @@ final class Lexer implements Closeable {
                 }
             } else if (isEndOfFile(c)) {
                 // error condition (end of file before end of token)
+                // I think we should keep this as it is because, EOF error seems to be more into IOException rather than the parsing issue
                 throw new IOException("(startline " + startLineNumber +
                         ") EOF reached before encapsulated token finished");
             } else {
